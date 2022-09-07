@@ -95,15 +95,16 @@
         var count = 0;
 
         const folder = zip.folder("arquivos");
-
+        const proxy = "https://cors-anywhere.herokuapp.com/";
         BODY_DATA.forEach((row) => {
-          const blobPromise = fetch(row[url]).then((r) => {
+          const blobPromise = fetch(proxy + row[url]).then((r) => {
             if (r.status === 200) return r.blob();
             return Promise.reject(new Error(r.status, r.statusText));
           });
 
+          const extension = row[url].match(/\.[0-9a-z]+$/i)[0];
           console.log(blobPromise);
-          folder.file(row[fileName], blobPromise);
+          folder.file(row[fileName] + extension, blobPromise);
         });
 
         zip
