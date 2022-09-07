@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSV Download</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato|Roboto|Source+Code+Pro"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/monokai.min.css"
+    />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+
+  <body>
+    <div id="header">
+      <h1 id="title">Baixar arquivos de uma lista CSV</h1>
+    </div>
+    <div id="container">
+      <section id="content">
+        <h2>Selecione o arquivo</h2>
+        <input type="file" id="files" name="files[]" multiple />
+        <hr />
+
+        <div id="table-wrapper">
+          <div id="table-scroll">
+            <table>
+              <thead>
+                <tr id="table-header">
+                  <th>id</th>
+                  <th>process</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="downloadArea active">
+          <button class="accordion">Baixar arquivos</button>
+          <div class="panel">
+            <label for="fileName">Nome do Arquivo</label>
+            <select name="fileName" id="fileName">
+              <option value="" selected disabled hidden>Nome</option>
+            </select>
+            <br />
+            <label for="fileUrl">Link do Arquivo</label>
+            <select name="fileUrl" id="fileUrl">
+              <option value="" selected disabled hidden>Link</option>
+            </select>
+            <br />
+            <input type="button" value="Baixar" id="btnDownload" />
+          </div>
+        </div>
+      </section>
+    </div>
+    <script
+      src="http://code.jquery.com/jquery-3.3.1.slim.js"
+      integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./jquery-csv.js"></script>
+    <script src="./jszip.js"></script>
+    <script src="./jszip-utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="helpers.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        if (isFileAPIAvailable()) {
+          $("#files").bind("change", handleDialog);
+        }
+
+        $("#btnDownload").click(download);
+      });
+
+      const HEADER_DATA = [];
+      const BODY_DATA = [];
+      let FILE_NAME = "arquivos.zip";
+
+      function download() {
+        const fileName = document.getElementById("fileName").value;
+        const url = document.getElementById("fileUrl").value;
+
+        if (!(fileName && url)) {
+          alert("Selecione a coluna do nome e do link");
+          return;
+        }
+
+        const zip = new JSZip();
+        var count = 0;
+
+        const folder = zip.folder("arquivos");
+
+        BODY_DATA.forEach((row) => {
+          const blobPromise = fetch(row[url]).then((r) => {
+            if (r.status === 200) return r.blob();
+            return Promise.reject(new Error(r.status, r.statusText));
+          });
+
+          console.log(blobPromise);
+          folder.file(row[fileName], blobPromise);
+        });
+
+        zip
+          .generateAsync({ type: "blob" })
+          .then((content) => saveAs(content, FILE_NAME));
+      }
+
+      function handleDialog(event) {
+        var files = event.target.files;
+        var file = files[0];
+        FILE_NAME = `${escape(file.name)
+          .toLowerCase()
+          .replace(".csv", ".zip")}`;
+
+        var reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function (event) {
+          var csv = event.target.result;
+          var data = $.csv.toArrays(csv);
+
+          HEADER_DATA.push(...data[0]);
+          $("#table-header").empty();
+          let el = document.createElement("th");
+          el.innerHTML = "Line";
+          $("#table-header").append(el);
+
+          HEADER_DATA.forEach((row) => {
+            // CREATE THE COLUMNS
+            let el = document.createElement("th");
+            el.innerHTML = row;
+            $("#table-header").append(el);
+
+            //Column of the name and URL
+            let option = document.createElement("option");
+            option.innerHTML = row;
+            option.value = row;
+            $("#fileName").append(option);
+            $("#fileUrl").append(option.cloneNode(true));
+          });
+
+          for (let index = 1; index < data.length; index++) {
+            const rowData = data[index];
+            // mapping data to object
+            const newRow = {};
+            HEADER_DATA.map((col, index) => {
+              newRow[col] = rowData[index];
+            });
+
+            BODY_DATA.push(newRow);
+
+            let tRow = document.createElement("tr");
+            let el = document.createElement("td");
+            el.innerHTML = index;
+            tRow.append(el);
+            rowData.forEach((column) => {
+              let el = document.createElement("td");
+              el.innerHTML = column;
+              //console.log(row)
+              tRow.append(el);
+            });
+            tRow.classList.add(index % 2 === 0 ? "even-row" : "odd-row");
+            $("#table-body").append(tRow);
+          }
+        };
+      }
+
+      var acc = document.getElementsByClassName("accordion");
+      var i;
+
+      for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+          this.classList.toggle("active");
+          var panel = this.nextElementSibling;
+          if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

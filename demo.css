@@ -1,0 +1,172 @@
+body {
+  font-family: "Lato", san-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Roboto", sans-serif;
+  font-weight: 900;
+  margin: 0;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+hr {
+  margin: 20px;
+}
+
+textarea {
+  width: 100%;
+  white-space: nowrap;
+}
+
+code {
+  font-family: "Source Code Pro", monospace;
+}
+
+#header {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 50px;
+  background: #333333;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+#title {
+  float: left;
+  padding-top: 10px;
+  padding-left: 10%;
+  color: white;
+  font-size: 1.25rem;
+}
+
+#link {
+  float: right;
+  padding-top: 10px;
+  padding-right: 10%;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#link a,
+#link a:hover {
+  color: mediumorchid;
+  text-decoration: none;
+}
+
+#container {
+  width: 80%;
+  max-width: 1500px;
+  padding: 0 50px 0 50px;
+  margin: 0 auto;
+  display: block;
+  overflow-x: hidden;
+  background: #f0f0f0;
+}
+
+#content {
+  background: #f0f0f0;
+  margin: 50px auto 0 auto;
+  padding: 20px 0 20px 0;
+}
+
+#run {
+  margin-top: 10px;
+  border-radius: 15%;
+}
+
+#result {
+  width: 100%;
+  height: 500px;
+  overflow: auto;
+}
+
+#table-wrapper {
+  position: relative;
+}
+#table-scroll {
+  height: 500px;
+  overflow: auto;
+  margin-top: 20px;
+}
+
+#table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  border-color: #9abad9;
+  border-spacing: 0;
+}
+#table-wrapper table thead tr {
+  top: 0px;
+  z-index: 2;
+  height: 50px;
+  width: 100%;
+
+  border: 1px solid red;
+}
+
+table tbody {
+  overflow: scroll;
+}
+table td {
+  border-color: #9abad9;
+  border-style: solid;
+  border-width: 1px;
+  color: #444;
+
+  font-size: 14px;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
+}
+table th {
+  background-color: #409cff;
+  border-color: #9abad9;
+  border-style: solid;
+  border-width: 1px;
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: normal;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
+}
+table .odd-row {
+  background-color: #d2e4fc;
+  text-align: left;
+  vertical-align: top;
+}
+table .even-row {
+  background-color: #ebf5ff;
+  text-align: left;
+  vertical-align: top;
+}
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
