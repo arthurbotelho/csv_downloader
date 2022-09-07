@@ -103,7 +103,6 @@
           });
 
           const extension = row[url].match(/\.[0-9a-z]+$/i)[0];
-          console.log(blobPromise);
           folder.file(row[fileName] + extension, blobPromise);
         });
 
